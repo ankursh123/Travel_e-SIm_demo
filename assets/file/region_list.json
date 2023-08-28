@@ -1,0 +1,30 @@
+[
+  {
+    "regionImage": "https://cdn.airalo.com/images/a10d3ea2-4f19-4ef0-b988-9f58120ca2b1.png",
+    "regionName": "Africa"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/6dd3b91a-c76a-4ca6-8eb9-ccf989eccac3.png",
+    "regionName": "Asia"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/6c5753bb-5300-4d6d-802e-8358d4c441c4.png",
+    "regionName": "Caribbean Islands"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/6ac17e60-8930-4042-89f0-4ac035d94295.png",
+    "regionName": "Europe"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/1f97527a-453f-466b-aa3c-95ef20e117fd.png",
+    "regionName": "Latin America"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/6fb3a348-219e-4fba-9ed9-a882980d6c3b.png",
+    "regionName": "Middle East and North Africa"
+  },
+  {
+    "regionImage": "https://cdn.airalo.com/images/bb120f49-7809-41c4-bd57-237d0ae994cd.png",
+    "regionName": "North America"
+  }
+]

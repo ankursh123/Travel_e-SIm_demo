@@ -1,0 +1,44 @@
+[
+  {
+    "coverage": "130 Countries",
+    "data": "1 GB",
+    "call": "10 Mins",
+    "text": "10 SMS",
+    "validity": "7 Days"
+  },
+  {
+    "coverage": "121 Countries",
+    "data": "1.5 GB",
+    "call": "2 Mins",
+    "text": "30 SMS",
+    "validity": "82 Days"
+  },
+  {
+    "coverage": "110 Countries",
+    "data": "10 GB",
+    "call": "50 Mins",
+    "text": "10 SMS",
+    "validity": "24 Days"
+  },
+  {
+    "coverage": "130 Countries",
+    "data": "20 GB",
+    "call": "10 Mins",
+    "text": "10 SMS",
+    "validity": "42 Days"
+  },
+  {
+    "coverage": "130 Countries",
+    "data": "99 GB",
+    "call": "30 Mins",
+    "text": "80 SMS",
+    "validity": "78 Days"
+  },
+  {
+    "coverage": "130 Countries",
+    "data": "1 GB",
+    "call": "10 Mins",
+    "text": "10 SMS",
+    "validity": "7 Days"
+  }
+]

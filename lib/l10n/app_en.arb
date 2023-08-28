@@ -1,0 +1,20 @@
+{
+  "data": "Data",
+  "notAvailable": "This feature is not available at the moment",
+  "store": "Store",
+  "myESim": "My E-Sims",
+  "profile": "Profile",
+  "hello": "Hello, John",
+  "search": "Search",
+  "localESim": "Local eSIMs",
+  "regionaleSIMs": "Regional eSIMs",
+  "globaleSIMs": "Global eSIMs",
+  "calls": "Calls",
+  "text": "Text",
+  "coverage": "COVERAGE",
+  "texts": "TEXTS",
+  "validity": "VALIDITY",
+  "buyNow": "US $9 - BUY NOW",
+  "discovery": "Discovery",
+  "cancel": "Cancel"
+}
