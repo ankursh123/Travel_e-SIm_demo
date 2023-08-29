@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/config/colorPalette.dart';
 import '../../../../app/config/commonTextStyle.dart';
 import '../../../../app/utils/commonImages.dart';
 import '../../../../app/utils/commonDimension.dart';
 import '../../../../data/core/Localize.dart';
 import '../../../../data/models/eSimModel.dart';
-import '../../../viewModels/home/homeViewModel.dart';
+import '../../../bloc/cubit/globalESim/globalESimCubit.dart';
+import '../../../bloc/state/globalESimState.dart';
 import '../../../widgets/commonWidgets.dart';
 import '../../home/widgets/GlobalESimWidgets.dart';
 
@@ -23,14 +24,15 @@ class _GlobalESimCardState extends State<GlobalESimCard> {
 
   ESimModel simData;
   _GlobalESimCardState({required this.simData});
-  HomeViewModel viewModel = Get.find();
+  // HomeViewModel viewModel = Get.find();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Obx(() {
+    return BlocBuilder<GlobalESimCubit, GlobalESimState>(
+    builder: (context, state){
         return Container(
-          height: viewModel.showCallsAndText.value ? size.height * CommonDimension.dp0_62 : size.height * CommonDimension.dp0_49,
+          height: context.read<GlobalESimCubit>().showCallsAndText ? size.height * CommonDimension.dp0_62 : size.height * CommonDimension.dp0_49,
           width: size.width,
           padding: const EdgeInsets.symmetric(horizontal: CommonDimension.dp12_0),
           child: Stack(
@@ -40,7 +42,7 @@ class _GlobalESimCardState extends State<GlobalESimCard> {
                 left: CommonDimension.dpZero,
                 right: CommonDimension.dpZero,
                 child: Container(
-                  height: viewModel.showCallsAndText.value ? size.height * CommonDimension.dp0_58 : size.height * CommonDimension.dp0_45,
+                  height: context.read<GlobalESimCubit>().showCallsAndText ? size.height * CommonDimension.dp0_58 : size.height * CommonDimension.dp0_45,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [
@@ -69,7 +71,7 @@ class _GlobalESimCardState extends State<GlobalESimCard> {
                       GlobalESimWidgets.commonDivider(),
                       GlobalESimWidgets.eSIMCoverageRow(const Icon(Icons.access_time_filled), Localize.instance.key.coverage, simData.coverage ?? ""),
                       GlobalESimWidgets.eSIMRow(const Icon(Icons.upload_rounded), Localize.instance.key.data.toUpperCase(), simData.data ?? ""),
-                      if(viewModel.showCallsAndText.value) ...[
+                      if(context.read<GlobalESimCubit>().showCallsAndText) ...[
                         GlobalESimWidgets.eSIMRow(const Icon(Icons.call), Localize.instance.key.calls.toUpperCase(), simData.call ?? ""),
                         GlobalESimWidgets.eSIMRow(const Icon(Icons.sms), Localize.instance.key.texts, simData.text ?? ""),
                       ],

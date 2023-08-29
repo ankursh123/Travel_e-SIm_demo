@@ -1,10 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_demo_persatation_1/app/utils/commonDimension.dart';
 import '../../../app/config/colorPalette.dart';
 import '../../../app/config/commonTextStyle.dart';
 import '../../../data/core/Localize.dart';
-import '../../viewModels/home/homeViewModel.dart';
+import '../../bloc/cubit/globalESim/globalESimCubit.dart';
+import '../../bloc/cubit/localESim/localESimCubit.dart';
+import '../../bloc/cubit/regionalESim/regionalESimCubit.dart';
+import '../../bloc/state/dataState.dart';
+import '../../bloc/state/globalESimState.dart';
 import '../../widgets/searchWidget.dart';
 import '../dashboard/widgets/countryListItem.dart';
 import '../dashboard/widgets/globaleSimCard.dart';
@@ -21,7 +26,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   ///Variables
-  final viewModel = Get.put(HomeViewModel());
   late final tabController;
   late final mainTabController;
 
@@ -37,7 +41,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     tabController = TabController(length: 2, vsync: this);
     mainTabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      viewModel.loadInitialData();
+      context.read<LocalESimCubit>().getCountryList();
+      context.read<RegionalESimCubit>().getRegionList();
+      context.read<GlobalESimCubit>().getESimData();
     });
   }
 
@@ -53,9 +59,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       body: Column(
         children: [
           ///Obx to observe changes in objects.
-          Obx(
-            () => viewModel.isDataLoaded.value
-                ? Expanded(
+                Expanded(
                     child: TabBarView(
                       controller: mainTabController,
                       physics: const NeverScrollableScrollPhysics(),
@@ -66,10 +70,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       ],
                     ),
                   )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-          ),
+
         ],
       ),
     );
@@ -213,101 +214,147 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   ///Local ESim UI ListView.
   Widget localESimView() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: CommonDimension.dp16_0,
-        right: CommonDimension.dp16_0,
-      ),
-      child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: viewModel.countryList.length,
-          itemBuilder: (_, index) => countryListTile(
-              viewModel.countryList[index].name ?? "",
-              viewModel.countryList[index].imageUrl ?? "")),
+    return BlocBuilder<LocalESimCubit, DataState>(
+      builder: (context, state){
+        if(state is Loading){
+          return const Center(
+            child: CupertinoActivityIndicator(),
+          );
+        } else if(state is Error) {
+          return const Center(
+            child: Text("There is an error!"),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(
+            left: CommonDimension.dp16_0,
+            right: CommonDimension.dp16_0,
+          ),
+          child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: context.read<LocalESimCubit>().countryList.length,
+              itemBuilder: (_, index) => countryListTile(
+                  context.read<LocalESimCubit>().countryList[index].name ?? "",
+                  context.read<LocalESimCubit>().countryList[index].imageUrl ?? ""),
+          ),
+        );
+    }
     );
+
   }
 
   ///Regional ESim UI ListView.
   Widget regionalESimView() {
-    return Padding(
-        padding: const EdgeInsets.only(
-          left: CommonDimension.dp16_0,
-          right: CommonDimension.dp16_0,
-        ),
-        child: ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: viewModel.regionList.length,
-            itemBuilder: (_, index) => regionListTile(
-                viewModel.regionList[index].regionName ?? "",
-                viewModel.regionList[index].regionImage ?? "")));
+    return BlocBuilder<RegionalESimCubit, DataState>(
+        builder: (context, state){
+          if(state is Loading){
+            return const Center(
+              child: CupertinoActivityIndicator(),
+            );
+          } else if(state is Error) {
+            return const Center(
+              child: Text("There is an error!"),
+            );
+          }
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: CommonDimension.dp16_0,
+                right: CommonDimension.dp16_0,
+              ),
+              child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: context.read<RegionalESimCubit>().regionList.length,
+                  itemBuilder: (_, index) => regionListTile(
+                      context.read<RegionalESimCubit>().regionList[index].regionName ?? "",
+                      context.read<RegionalESimCubit>().regionList[index].regionImage ?? ""),
+              ),
+          );
+        });
+
   }
 
   ///Global ESim UI ListView.
   Widget globalESimView() {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: CommonDimension.dp20_0,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(
-              CommonDimension.dp16_0,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                CommonDimension.dp8_0,
-              ),
-              child: Container(
-                height: CommonDimension.dp36_0,
-                decoration: const BoxDecoration(
-                  color: Colors.black45,
+    return BlocBuilder<GlobalESimCubit, GlobalESimState>(
+      builder: (context, state) {
+        if(state is ESimLoading){
+          return const Center(
+            child: CupertinoActivityIndicator(),
+          );
+        } else if(state is ESimError) {
+          return const Center(
+            child: Text("There is an error!"),
+          );
+        }
+        else {
+          return SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: CommonDimension.dp20_0,
                 ),
-                child: TabBar(
-                  onTap: (int index) {
-                    viewModel.showCallsAndText.value = index.isOdd;
-                    // bool showData = Bool(index);
-                  },
-                  indicator: const BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      ColorPalette.redAccent,
-                      ColorPalette.pinkAccent,
-                      ColorPalette.shade500,
-                    ], begin: Alignment.centerLeft, end: Alignment.centerRight),
+                Padding(
+                  padding: const EdgeInsets.all(
+                    CommonDimension.dp16_0,
                   ),
-                  controller: tabController,
-                  tabs: [
-                    Text(Localize.instance.key.data,
-                        style: const TextStyle(
-                          color: ColorPalette.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      CommonDimension.dp8_0,
+                    ),
+                    child: Container(
+                      height: CommonDimension.dp36_0,
+                      decoration: const BoxDecoration(
+                        color: Colors.black45,
+                      ),
+                      child: TabBar(
+                        onTap: (int index) {
+                          context.read<GlobalESimCubit>().showCallsAndText = index.isOdd;
+                          context.read<GlobalESimCubit>().toggle();
+                          // bool showData = Bool(index);
+                        },
+                        indicator: const BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                            ColorPalette.redAccent,
+                            ColorPalette.pinkAccent,
+                            ColorPalette.shade500,
+                          ], begin: Alignment.centerLeft, end: Alignment.centerRight),
                         ),
-                        textScaleFactor: CommonDimension.dp1_0),
-                    Text(
-                        "${Localize.instance.key.data}/${Localize.instance.key.calls}/${Localize.instance.key.text}",
-                        textScaleFactor: CommonDimension.dp1_0),
-                  ],
+                        controller: tabController,
+                        tabs: [
+                          Text(Localize.instance.key.data,
+                              style: const TextStyle(
+                                color: ColorPalette.white,
+                              ),
+                              textScaleFactor: CommonDimension.dp1_0),
+                          Text(
+                              "${Localize.instance.key.data}/${Localize.instance.key.calls}/${Localize.instance.key.text}",
+                              textScaleFactor: CommonDimension.dp1_0),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: CommonDimension.dp20_0,
+                ),
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: context.read<GlobalESimCubit>().simDATA.length,
+                    itemBuilder: (_, index) => GlobalESimCard(
+                      simData: context.read<GlobalESimCubit>().simDATA[index],
+                    )),
+                const SizedBox(
+                  height: CommonDimension.dp20_0,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(
-            height: CommonDimension.dp20_0,
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: viewModel.simDATA.length,
-              itemBuilder: (_, index) => GlobalESimCard(
-                    simData: viewModel.simDATA[index],
-                  )),
-          const SizedBox(
-            height: CommonDimension.dp20_0,
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 
